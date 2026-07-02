@@ -50,3 +50,25 @@ To execute a test run of the graph workflow locally using a sample repository pa
 ```bash
 uv run python main.py
 ```
+
+---
+
+## Accessing the User Interface
+
+When running the FastAPI server (`app/fast_api_app.py`), the default Google Agent Development Kit (ADK) dashboard mounts itself on the root path `/` and may redirect you automatically to the ADK Dev UI.
+
+You can access the interfaces using the following URLs:
+
+1. **Custom Landing Page (Clean Tech UI)**: 
+   Go directly to the static path:
+   👉 [http://localhost:8000/static/index.html](http://localhost:8000/static/index.html)
+
+2. **FastAPI Swagger API Docs**:
+   👉 [http://localhost:8000/docs](http://localhost:8000/docs)
+
+3. **ADK Dev-UI / Playground**:
+   👉 [http://localhost:8000/](http://localhost:8000/)
+
+### Customizing Root Redirect (Optional)
+If you want the root path `/` to load the custom landing page instead of the ADK Dev UI, edit [app/fast_api_app.py](app/fast_api_app.py) and change `web=True` to `web=False` inside the `get_fast_api_app` call.
+
