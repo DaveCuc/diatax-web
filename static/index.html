@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diátaxis Web - Technical Documentation Generator</title>
+    <!-- Google Fonts: Inter and Playfair Display for contrasting typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-glow"></div>
+    
+    <main class="container">
+        <!-- Header / Logo -->
+        <header class="main-header">
+            <h1 class="logo-text">Diátaxis<span>web</span></h1>
+            <p class="tagline">Clean documentation architecture for premium developments</p>
+        </header>
+
+        <!-- Dynamic Card Component -->
+        <div class="glass-card" id="main-card">
+            
+            <!-- STATE 1: Data Capture (Form) -->
+            <section id="state-capture" class="state-view active">
+                <form id="doc-form" novalidate>
+                    <div class="form-group">
+                        <label for="repo-url" class="field-label">GitHub Repository</label>
+                        <div class="input-wrapper">
+                            <input 
+                                type="url" 
+                                id="repo-url" 
+                                name="repo-url" 
+                                placeholder="https://github.com/user/project" 
+                                autocomplete="off"
+                                required
+                            >
+                            <span class="validation-dot"></span>
+                        </div>
+                        <span class="error-message" id="url-error">Please enter a valid github.com URL</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guide-type" class="field-label">Guide Type (Diátaxis)</label>
+                        <div class="select-wrapper">
+                            <select id="guide-type" name="guide-type" required>
+                                <option value="" disabled selected hidden>Select an option...</option>
+                                <option value="tutorial">Tutorial (Practical learning)</option>
+                                <option value="how-to">How-to Guide (Problem solving)</option>
+                                <option value="reference">Reference (Technical information)</option>
+                                <option value="explanation">Explanation (Theoretical understanding)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="project-desc" class="field-label">Project Description</label>
+                        <div class="textarea-wrapper">
+                            <textarea 
+                                id="project-desc" 
+                                name="project-desc" 
+                                rows="4" 
+                                maxlength="500" 
+                                placeholder="Briefly describe the purpose of your code or key functionality..." 
+                                required
+                            ></textarea>
+                            <div class="char-counter"><span id="current-chars">0</span> / 500</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="btn-submit">
+                        <span>Generate</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </form>
+            </section>
+
+            <!-- STATE 2: Loading State -->
+            <section id="state-loading" class="state-view">
+                <div class="loading-container">
+                    <div class="skeleton-progress-container">
+                        <div class="skeleton-bar active"></div>
+                        <div class="skeleton-bar delay-1"></div>
+                        <div class="skeleton-bar delay-2"></div>
+                    </div>
+                    <div class="loader-pulse"></div>
+                    <p class="loading-text">Agents are analyzing the code and writing the content...</p>
+                </div>
+            </section>
+
+            <!-- STATE 3: Resolution State -->
+            <section id="state-resolution" class="state-view">
+                <div class="success-container">
+                    <div class="success-icon-wrapper">
+                        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </div>
+                    <h2 class="success-title">Success, your documentation has been generated</h2>
+                    <p class="success-subtitle">The system has completed structuring the static website based on the Diátaxis framework.</p>
+                    
+                    <a id="btn-view-doc" href="#" class="btn-secondary" target="_blank">
+                        <span>View documentation</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Diátaxis Documentation Generator</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

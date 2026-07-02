@@ -1,0 +1,31 @@
+# System Caches
+__pycache__/
+.DS_Store
+*.pyc
+
+# Local Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# ADK Metadata & Skills
+.agents/
+.agents-cli/
+
+# Python Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Node Dependencies
+node_modules/
+
+# Isolated Concurrent Workspaces (Sandbox)
+workspace_tmp/
+
+# Build & Compilation outputs (local tests)
+dist/
+build/
+*.zip
+*.tar.gz
