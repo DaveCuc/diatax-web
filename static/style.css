@@ -1283,6 +1283,44 @@ body {
 }
 
 
+/* Floating GitHub Bubble */
+.github-float-bubble {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(10, 16, 30, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 30px rgba(10, 16, 30, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.github-float-bubble:hover {
+    transform: translateY(-4px) scale(1.05);
+    border-color: var(--accent);
+    box-shadow: 0 15px 35px rgba(122, 141, 255, 0.3), 0 0 20px rgba(122, 141, 255, 0.2);
+}
+
+.github-bubble-icon {
+    width: 26px;
+    height: 26px;
+    filter: invert(100%) sepia(0%) saturate(7460%) hue-rotate(94deg) brightness(105%) contrast(105%);
+    transition: filter 0.3s ease;
+}
+
+.github-float-bubble:hover .github-bubble-icon {
+    filter: invert(82%) sepia(35%) saturate(1003%) hue-rotate(186deg) brightness(101%) contrast(106%);
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
