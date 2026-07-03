@@ -418,6 +418,7 @@ source = { editable = "." }
 dependencies = [
     { name = "a2a-sdk", extra = ["http-server"] },
     { name = "aiohttp" },
+    { name = "fpdf" },
     { name = "gcsfs" },
     { name = "google-adk", extra = ["gcp"] },
     { name = "google-cloud-logging" },
@@ -447,6 +448,7 @@ requires-dist = [
     { name = "a2a-sdk", extras = ["http-server"], specifier = "~=0.3.22" },
     { name = "aiohttp", specifier = ">=3.13.4" },
     { name = "codespell", marker = "extra == 'lint'", specifier = ">=2.2.0,<3.0.0" },
+    { name = "fpdf", specifier = ">=1.7.2,<2.0.0" },
     { name = "gcsfs", specifier = ">=2024.11.0" },
     { name = "google-adk", extras = ["eval"], marker = "extra == 'eval'", specifier = ">=2.0.0,<3.0.0" },
     { name = "google-adk", extras = ["gcp"], specifier = ">=2.0.0,<3.0.0" },
@@ -548,6 +550,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/e6/dc/be6cbe99670cd6e4a
 wheels = [
     { url = "https://files.pythonhosted.org/packages/13/37/a065dc3bd6e49423a6532c642ca7378d3f467b1ef44c2800c937af7f9739/filelock-3.29.4-py3-none-any.whl", hash = "sha256:dac1648087d5115554850d113e7dd8c83ab2d38e3435dde2d4f163847e57b767", size = 42757, upload-time = "2026-06-13T16:11:59.582Z" },
 ]
+
+[[package]]
+name = "fpdf"
+version = "1.7.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/37/c6/608a9e6c172bf9124aa687ec8b9f0e8e5d697d59a5f4fad0e2d5ec2a7556/fpdf-1.7.2.tar.gz", hash = "sha256:125840783289e7d12552b1e86ab692c37322e7a65b96a99e0ea86cca041b6779", size = 39504, upload-time = "2015-01-21T00:07:47.493Z" }
 
 [[package]]
 name = "frozenlist"

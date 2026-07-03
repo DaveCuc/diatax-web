@@ -49,11 +49,12 @@ async def main():
         new_message=types.Content(role="user", parts=[types.Part.from_text(text=sample_input)]),
     ):
         if event.output is not None:
-            # Prints outputs returned specifically by the active Node function
-            print(f"[Node Output]: {event.output}")
+            # Safely print on Windows console with non-ASCII replacements
+            out_str = str(event.output)
+            print(f"[Node Output]: {out_str.encode('ascii', errors='replace').decode('ascii')}")
         if event.actions and event.actions.state_delta:
-            # Prints details of global state updates in the shared workflow context
-            print(f"[State Delta]: {event.actions.state_delta}")
+            delta_str = str(event.actions.state_delta)
+            print(f"[State Delta]: {delta_str.encode('ascii', errors='replace').decode('ascii')}")
 
 if __name__ == "__main__":
     # Execute the event loop locally

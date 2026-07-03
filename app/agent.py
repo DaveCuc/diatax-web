@@ -35,6 +35,9 @@ from google.adk.apps import App
 from google.adk.events.event import Event
 from google.adk.agents.context import Context
 from google.genai import types
+from app.security import generate_security_report, is_prompt_injection_content
+from google.adk.skills import load_skill_from_dir
+from google.adk.tools.skill_toolset import SkillToolset
 
 # =========================================================================
 # Model Selection Configuration
@@ -44,6 +47,7 @@ from google.genai import types
 # This permits changing LLM targets seamlessly without modifying the code.
 # =========================================================================
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+AGENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # =========================================================================
 # Workflow State Schema Definition
@@ -100,35 +104,47 @@ def get_genai_client() -> genai.Client:
 # =========================================================================
 def get_diataxis_guidelines(guide_type: str) -> str:
     """
-    Reads the local 'diataxis.md' file and extracts instructions matching
-    the selected documentation pillar. Acts as the knowledge base for our agents.
+    Loads the specific Diataxis skill using SkillToolset based on the guide type.
     """
-    try:
-        with open("diataxis.md", "r", encoding="utf-8") as f:
-            content = f.read()
-    except Exception:
-        return "Failed to load Diátaxis guidelines."
-
-    # Map pillars to corresponding section boundary markers in diataxis.md
-    sections = {
-        "tutorial": ["1. Learning: Tutorials", "2. Work:"],
-        "how-to": ["2. Work: How-to Guides", "3. Information:"],
-        "reference": ["3. Information: Reference", "4. Understanding:"],
-        "explanation": ["4. Understanding: Explanation", "---"]
+    # Normalize guide types to match skill folder names
+    mapping = {
+        "tutorial": "diataxis-tutorials",
+        "how-to": "diataxis-howto",
+        "reference": "diataxis-reference",
+        "explanation": "diataxis-explanation"
     }
-    
-    bounds = sections.get(guide_type.lower())
-    if not bounds:
-        return "Unrecognized guide type in Diátaxis."
-        
-    start_idx = content.find(bounds[0])
-    if start_idx == -1:
-        return f"Section {guide_type} not found in diataxis.md."
-        
-    end_idx = content.find(bounds[1], start_idx)
-    if end_idx == -1:
-        return content[start_idx:].strip()
-    return content[start_idx:end_idx].strip()
+    skill_name = mapping.get(guide_type.lower())
+    if not skill_name:
+        return "Unrecognized guide type in Diataxis."
+
+    skills_dir = Path(AGENT_DIR) / ".agents" / "skills"
+    try:
+        diataxis_skill = load_skill_from_dir(skills_dir / skill_name)
+        skill_toolset = SkillToolset(skills=[diataxis_skill])
+        return skill_toolset._get_skill(skill_name).instructions
+    except Exception as e:
+        # Fallback to string slicing if skill directory loading fails
+        try:
+            with open("diataxis.md", "r", encoding="utf-8") as f:
+                content = f.read()
+            sections = {
+                "tutorial": ["1. Learning: Tutorials", "2. Work:"],
+                "how-to": ["2. Work: How-to Guides", "3. Information:"],
+                "reference": ["3. Information: Reference", "4. Understanding:"],
+                "explanation": ["4. Understanding: Explanation", "---"]
+            }
+            bounds = sections.get(guide_type.lower())
+            if not bounds:
+                return "Unrecognized guide type in Diataxis."
+            start_idx = content.find(bounds[0])
+            if start_idx == -1:
+                return f"Section {guide_type} not found in diataxis.md."
+            end_idx = content.find(bounds[1], start_idx)
+            if end_idx == -1:
+                return content[start_idx:].strip()
+            return content[start_idx:end_idx].strip()
+        except Exception:
+            return f"Failed to load Diátaxis guidelines: {str(e)}"
 
 # =========================================================================
 # Forceful Directory Deletion (Windows Workaround)
@@ -153,19 +169,27 @@ def rmtree_force(path: Path):
 # =========================================================================
 def compress_workspace(workspace_dir: Path) -> Path:
     """
-    Packages all generated assets (Markdown document, HTML, CSS, JS)
-    inside the session workspace into documentation.zip for delivery.
+    Packages only the generated documentation assets (Markdown document, HTML, CSS, JS, summaries, reports)
+    inside the session workspace into documentation.zip for delivery, excluding original source files.
     """
     zip_path = workspace_dir / "documentation.zip"
+    
+    # Closed list of generated documentation filenames
+    doc_filenames = [
+        "index.html",
+        "style.css",
+        "script.js",
+        "document.md",
+        "analysis_summary.txt",
+        "security_report.md",
+        "security_report.pdf"
+    ]
+    
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, _, files in os.walk(workspace_dir):
-            for file in files:
-                # Exclude the zip archive itself to prevent recursive inflation
-                if file == "documentation.zip":
-                    continue
-                file_path = Path(root) / file
-                rel_path = file_path.relative_to(workspace_dir)
-                zipf.write(file_path, rel_path)
+        for fname in doc_filenames:
+            file_path = workspace_dir / fname
+            if file_path.exists():
+                zipf.write(file_path, fname)
     return zip_path
 
 # =========================================================================
@@ -246,10 +270,6 @@ def clone_and_clean_repo(repo_url: str, workspace_dir: Path):
 # =========================================================================
 # Source Code Reader Node Helper
 # =========================================================================
-def read_clean_files(workspace_dir: Path) -> str:
-    """
-    Reads code content from all sanitized files inside the sandbox directory.
-    Caps read lengths at 15KB per file to protect LLM context windows.
 def read_clean_files(workspace_dir: Path) -> tuple[str, list[str]]:
     """
     Reads code contents from approved source files inside the workspace.
@@ -541,7 +561,7 @@ def generate_site(ctx: Context, node_input: dict) -> Event:
     """
     Design Role: SiteWriter (A2UI).
     - Processes the approved Markdown file.
-    - References sitewriter.md design guidelines.
+    - Loads visual design skills (sitewriter & frontend-design) via SkillToolset.
     - Generates corresponding static site index.html and style.css assets.
     - Packages all resources inside documentation.zip.
     """
@@ -549,24 +569,49 @@ def generate_site(ctx: Context, node_input: dict) -> Event:
     markdown_content = ctx.state.get("generated_markdown", "")
     description = ctx.state.get("description", "")
     
-    # Read HTML/CSS formatting guidelines
+    # Load design skills via SkillToolset
+    skills_dir = Path(AGENT_DIR) / ".agents" / "skills"
     try:
-        with open("sitewriter.md", "r", encoding="utf-8") as f:
-            sitewriter_rules = f.read()
-    except Exception:
-        sitewriter_rules = "No sitewriter.md rules found."
+        sitewriter_skill = load_skill_from_dir(skills_dir / "sitewriter")
+        frontend_design_skill = load_skill_from_dir(skills_dir / "frontend-design")
+        skill_toolset = SkillToolset(skills=[sitewriter_skill, frontend_design_skill])
+        
+        sitewriter_instructions = skill_toolset._get_skill("sitewriter").instructions
+        design_instructions = skill_toolset._get_skill("frontend-design").instructions
+    except Exception as e:
+        # Fallback to file reading if skill loading fails in sandbox environments
+        try:
+            with open("sitewriter.md", "r", encoding="utf-8") as f:
+                sitewriter_instructions = f.read()
+        except Exception:
+            sitewriter_instructions = "No sitewriter rules found."
+        design_instructions = "Generate modern visual styles with premium layout and typography."
 
     prompt = f"""
 Act as "SiteWriter", an expert minimalist interface architect.
 Your objective is to process the following technical draft in Markdown and generate the interactive landing page (complete HTML and CSS).
 
-SiteWriter Guidelines:
-{sitewriter_rules}
+You must combine the base layout structures (sitewriter rules) with dynamic visual design principles (frontend design rules) to create an elegant, unique, and premium website matching the project's identity.
 
-Project context description (use this to apply color, typography, and visual style customization subtly):
+=========================================
+1. BASE PAGE STRUCTURE & FUNCTIONALITY RULES (SITELAYOUT SKILL):
+=========================================
+{sitewriter_instructions}
+
+=========================================
+2. DYNAMIC VISUAL DESIGN & AESTHETIC RULES (FRONTEND DESIGN SKILL):
+=========================================
+{design_instructions}
+
+=========================================
+PROJECT CONTEXT DESCRIPTION:
+=========================================
+Use this description to apply color, typography, and visual style customization dynamically:
 {description}
 
-Approved technical documentation in Markdown:
+=========================================
+DOCUMENTATION CONTENT (MARKDOWN):
+=========================================
 {markdown_content}
 
 You must respond exclusively in structured JSON format, without any surrounding comments or markdown blocks:
