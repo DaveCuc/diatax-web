@@ -19,7 +19,7 @@ Generate the content for an `index.html` file structured in a strict three-colum
 * **Mandatory Navbar**: Include a top-fixed or semantic `<nav>` bar containing exclusively the **Project Title** and **Document Type** (pillar).
 * **Mandatory Footer**: Include a semantic `<footer>` element containing the project **Version**, the author **DiataxWeb**, and the **Current Year** (e.g. 2026).
 * **Left Column (Global Navigation):**
-* Create a lateral `<aside>` with anchor links (e.g., `<a href="#start">`, `<a href="#tutorial">`) pointing to the master sections of the document (Introduction, Tutorials, How-to Guides, Reference, Explanation).
+* Create a lateral `<aside>` containing a semantic vertical list (`<nav><ul><li><a href="...">Text</a></li>...</ul></nav>`) pointing to the master sections of the document (Introduction, Tutorials, How-to Guides, Reference, Explanation).
 
 
 * **Center Column (Main Content):**
@@ -42,6 +42,7 @@ Generate the content for an `index.html` file structured in a strict three-colum
 
 Generate the code for a `style.css` file applying the following strict directives:
 * **Structure & Creative Liberty:** The visual layout must strictly preserve the three-column navigation structure (Aside Menu | Content Section | Table of Contents) for readability. However, within these boundaries, you have full design liberty to customize backgrounds, border-radii, grid alignments, spacing, and micro-interactions following the `frontend-design` skill to match the project's identity.
+* **Navigation Styling & Overflow Protection**: Style all navigation links in both the Left Column (Global Navigation) and Right Column (Local TOC) to display as clean, vertical list items. Remove default bullet points and margins (`list-style: none`, `padding: 0`). Apply consistent vertical spacing (e.g., `margin-bottom: 0.75rem` or `gap: 0.75rem`) between links. Force strict text wrapping using `overflow-wrap: break-word; word-break: break-word; display: block; max-width: 100%;` on all anchor tags to permanently prevent text from overflowing or escaping the column boundaries.
 * **Variables and Theme:** Use `:root` to declare a flexible palette driven by the document content and the visual hierarchy. Custom fonts and text scaling must adapt to the brand identity of the project under documentation.
 * **Terminal Components:** Style the `<pre>` tags to act as high-contrast terminal code blocks. The code block must apply strong contrast (either bright text on a dark background, or dark text on a bright background). Remove generic macOS window decorations (such as red, yellow, and green window dots) to prevent visual clichés, prioritizing clean borders and precise monospace typography instead.
 * **Tab System (Zero JS):** Hide all `.page` elements by default (`display: none`). Use the `:target` and `:has` CSS pseudo-selectors to reveal only the `<article>` whose `id` matches the URL hash, guaranteeing that `#start` is visible if there is no active anchor.
