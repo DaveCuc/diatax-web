@@ -82,9 +82,26 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     Manages startup and shutdown hooks for the server application.
     Initializes global services and telemetry exporters safely.
     """
-    await services.initialize()
+    from app.agent import app as adk_app
+    from app.agent import root_agent
+
+    runner = Runner(
+        app=adk_app,
+        session_service=services.get_session_service(),
+        artifact_service=services.get_artifact_service(),
+        auto_create_session=True,
+    )
+    app.state.runner = runner
+    app.state.agent_app_name = adk_app.name
+
+    await attach_a2a_routes(
+        app,
+        agent=root_agent,
+        runner=runner,
+        task_store=InMemoryTaskStore(),
+        rpc_path=f"/a2a/{adk_app.name}",
+    )
     yield
-    await services.close()
 
 # =========================================================================
 # ADK FastAPI App Hook Configuration
@@ -95,13 +112,12 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app: FastAPI = get_fast_api_app(
     agents_dir=AGENT_DIR,
     web=True,
-    lifespan=lifespan,
+    artifact_service_uri=services.ARTIFACT_SERVICE_URI,
     allow_origins=allow_origins,
+    session_service_uri=services.SESSION_SERVICE_URI,
+    otel_to_cloud=False,
+    lifespan=lifespan,
 )
-
-runner = Runner()
-task_store = InMemoryTaskStore()
-attach_a2a_routes(app, runner, task_store)
 
 # =========================================================================
 # Endpoint: Trigger Documentation Generation (/generate)
@@ -123,7 +139,7 @@ async def generate_documentation_endpoint(req: GenerateRequest) -> dict[str, str
     Fires the ADK 2.0 Graph Workflow nodes asynchronously and returns
     the generated session UUID to enable subsequent file downloads.
     """
-    from app.agent import app as adk_app
+    runner = app.state.runner
     
     # Setup session inputs
     payload = {
@@ -132,10 +148,9 @@ async def generate_documentation_endpoint(req: GenerateRequest) -> dict[str, str
         "description": req.description
     }
     
-    # Instantiate the local workflow runner
-    runner = Runner(app=adk_app)
+    # Create session using the pre-configured runner
     session = await runner.session_service.create_session(
-        app_name="diatax-web",
+        app_name=app.state.agent_app_name,
         user_id="web_user"
     )
     
