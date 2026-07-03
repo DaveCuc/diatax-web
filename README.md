@@ -1,4 +1,17 @@
-# Diátaxis Web - Automated Technical Documentation Generator
+<p align="center">
+  <h1 align="center">Diátaxis Web</h1>
+   <h2 align="center">Automated Technical Documentation Generator</h2>
+</p>
+
+<p align="center"> 
+   <img src="https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white" alt="Python 3.10+"/> 
+   <img src="https://img.shields.io/badge/Framework-Google%20ADK%202.0-4285F4?logo=google&logoColor=white" alt="Google ADK 2.0"/> 
+   <img src="https://img.shields.io/badge/Workflow-Graph%20Workflow%20API-purple" alt="Graph Workflow API"/> 
+   <img src="https://img.shields.io/badge/Architecture-Multi--Agent-8A2BE2" alt="Multi-Agent"/> 
+   <img src="https://img.shields.io/badge/Framework-Diátaxis-2ea44f" alt="Diátaxis Framework"/> 
+   <img src="https://img.shields.io/badge/Execution-Local%20Sandbox-orange" alt="Local Sandbox"/> 
+</p>
+
 
 Diátaxis Web is an automated technical documentation generation system powered by **Google Agent Development Kit (ADK) 2.0** utilizing the new **Graph Workflow API**. It processes public GitHub repositories, analyzes the code architecture, and writes documentation aligned to the four pillars of the Diátaxis framework (Tutorials, How-To Guides, References, and Explanations) inside an isolated local sandbox.
 
@@ -87,3 +100,4 @@ To run the agent workflow pipeline locally using terminal commands with a mock p
 ```bash
 uv run python main.py
 ```
+

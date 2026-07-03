@@ -12,6 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .agent import app
+import importlib
+from types import ModuleType
+from typing import Any
 
 __all__ = ["app"]
+
+
+def __getattr__(name: str) -> Any:
+    if name == "app":
+        module = importlib.import_module(".agent", __name__)
+        return getattr(module, "app")
+    raise AttributeError(f"module {__name__} has no attribute {name}")
+
+
+def __dir__() -> list[str]:
+    return sorted(__all__ + ["__getattr__", "__dir__"])
