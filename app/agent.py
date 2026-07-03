@@ -36,7 +36,6 @@ from google.adk.events.event import Event
 from google.adk.agents.context import Context
 from google.genai import types
 
-# Schema definition for workflow state
 class WorkflowState(BaseModel):
     session_id: str = ""
     workspace_path: str = ""
@@ -262,6 +261,8 @@ def clone_and_clean_repo(repo_url: str, workspace_dir: Path):
     for root, dirs, files in os.walk(workspace_dir, topdown=True):
         root_path = Path(root)
         
+        # Exclude directories early in the traversal to prevent processing
+        # any child files or nested folders under blacklisted paths.
         for d in list(dirs):
             rel_dir = (root_path / d).relative_to(workspace_dir)
             rel_dir_str = rel_dir.as_posix()
@@ -292,8 +293,14 @@ def clone_and_clean_repo(repo_url: str, workspace_dir: Path):
 
 def read_clean_files(workspace_dir: Path) -> tuple[str, list[str]]:
     """
-    Reads code contents from all clean source files allowed inside the workspace.
-    Files containing prompt-injection markers or hidden internal directories are skipped.
+    Reads code contents from approved source files inside the workspace.
+
+    This function performs two security-critical tasks:
+    1. It excludes hidden internal tooling directories like `.agents`.
+    2. It detects prompt injection patterns in file contents and omits those files.
+
+    The returned code text is safe to present to the LLM for repository analysis,
+    while ignored files are recorded for auditing in the security report.
     """
     allowed_extensions = {
         ".py", ".js", ".ts", ".jsx", ".tsx", ".json", ".md",
@@ -400,6 +407,9 @@ def investigate_code(ctx: Context, node_input: dict) -> Event:
     else:
         ignored_summary = "No suspicious embedded AI instructions were detected in analyzed source files."
 
+    # Security comment: the prompt explicitly informs the model that some files were
+    # intentionally omitted due to hidden AI instructions or internal tool paths.
+    # This reinforces the defense-in-depth behavior of the ingestion pipeline.
     prompt = f"""
 Analyze the following source code and context information to generate the technical basis for a Diátaxis document of type "{guide_type}".
 
