@@ -246,10 +246,6 @@ def clone_and_clean_repo(repo_url: str, workspace_dir: Path):
 # =========================================================================
 # Source Code Reader Node Helper
 # =========================================================================
-def read_clean_files(workspace_dir: Path) -> str:
-    """
-    Reads code content from all sanitized files inside the sandbox directory.
-    Caps read lengths at 15KB per file to protect LLM context windows.
 def read_clean_files(workspace_dir: Path) -> tuple[str, list[str]]:
     """
     Reads code contents from approved source files inside the workspace.
