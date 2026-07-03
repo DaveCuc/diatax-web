@@ -30,14 +30,16 @@ Generate the content for an `index.html` file structured in a three-column layou
 * **Right Column (Local Index / TOC):**
 * Scan the previously processed `<h2>` and `<h3>` headers and build a secondary navigation menu (`<ul>`).
 * Link each element to its respective anchor `id` in the center content, applying a visual indentation to `<h3>` levels.
+* Use a minimal JavaScript layer only for redirections so that clicks on the local index correctly navigate to the matching article and internal heading without altering the static HTML and CSS structure.
 
 
 
 ### Phase 3: Rendering Engine and Styles (CSS)
 
 Generate the code for a `style.css` file applying the following strict directives:
-
-* **Variables and Theme:** Use `:root` to declare a minimalist palette. Paper white background (`#ffffff`), ink black text (`#111111`), elegant gold for details and links (`#d4af37`), dark console backgrounds (`#0f1419`). Combine *Sans-Serif* fonts for paragraphs, *Serif* for titles (`h1, h2, h3`), and *Monospace* for code.
+* **Variables and Theme:** Use `:root` to declare a flexible palette driven by the document content and the visual hierarchy detected. The layout, spacing, accent colors, and typography must adapt to the documentation being rendered instead of forcing a predesigned visual system. 
+Combine *Sans-Serif* fonts for paragraphs, *Serif* for titles (`h1, h2, h3`), and *Monospace* for code
+Preserve the console component styling exactly with dark console background (`#0f1419`) and the macOS-like terminal treatment for `<pre>` blocks.
 * **Tab System (Zero JS):** Hide all `.page` elements by default (`display: none`). Use the `:target` and `:has` CSS pseudo-selectors to reveal only the `<article>` whose `id` matches the URL hash, guaranteeing that `#start` is visible if there is no active anchor.
 * **Terminal Components:** Style the `<pre>` tags to replicate a macOS console window. Apply soft shadows and use a `::before` pseudo-element anchored at the top of the block to inject three dots (red, yellow, green) using the `text-shadow` property.
 * **Responsiveness Rules:** Implement a `@media` query for screens smaller than `1100px`. Force the main structure to collapse into a single fluid column of 100% width, permanently hiding the left and right navigation columns.

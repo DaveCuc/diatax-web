@@ -4,19 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diátaxis Web - Technical Documentation Generator</title>
-    <!-- Google Fonts: Inter and Playfair Display for contrasting typography -->
+    <!-- Google Fonts: Space Grotesk and Playfair Display for contrasting typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="page-loading">
+    <div class="skeleton-screen" aria-hidden="true">
+        <div class="skeleton-shell">
+            <div class="skeleton-logo"></div>
+            <div class="skeleton-tagline"></div>
+            <div class="skeleton-card">
+                <div class="skeleton-label"></div>
+                <div class="skeleton-input"></div>
+                <div class="skeleton-label short"></div>
+                <div class="skeleton-input"></div>
+                <div class="skeleton-label"></div>
+                <div class="skeleton-textarea"></div>
+                <div class="skeleton-button"></div>
+            </div>
+        </div>
+    </div>
     <div class="background-glow"></div>
     
-    <main class="container">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">Diatax<span>web</span></a>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#projects" class="nav-link">About Project</a>
+                <a href="#diataxis" class="nav-link">Diátaxis</a>
+                <a href="#guide" class="nav-link">Guide</a>
+                <a href="#about" class="nav-link">Team</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container" id="home">
         <!-- Header / Logo -->
         <header class="main-header">
-            <h1 class="logo-text">Diátaxis<span>web</span></h1>
+            <h1 class="logo-text" tabindex="0" role="link" aria-label="Go to frontend design page">Diatax<span>web</span></h1>
             <p class="tagline">Clean documentation architecture for premium developments</p>
         </header>
 
@@ -80,13 +108,15 @@
             <!-- STATE 2: Loading State -->
             <section id="state-loading" class="state-view">
                 <div class="loading-container">
-                    <div class="skeleton-progress-container">
-                        <div class="skeleton-bar active"></div>
-                        <div class="skeleton-bar delay-1"></div>
-                        <div class="skeleton-bar delay-2"></div>
+                    <div class="loading-bars" aria-label="Generating documentation" role="status">
+                        <span class="loading-bar"></span>
+                        <span class="loading-bar"></span>
+                        <span class="loading-bar"></span>
+                        <span class="loading-bar"></span>
                     </div>
-                    <div class="loader-pulse"></div>
-                    <p class="loading-text">Agents are analyzing the code and writing the content...</p>
+                    <p id="loading-step-text" class="loading-step-text" aria-live="polite">
+                        Receiving form data and activating the session...
+                    </p>
                 </div>
             </section>
 
@@ -101,16 +131,140 @@
                     </div>
                     <h2 class="success-title">Success, your documentation has been generated</h2>
                     <p class="success-subtitle">The system has completed structuring the static website based on the Diátaxis framework.</p>
-                    
-                    <a id="btn-view-doc" href="#" class="btn-secondary" target="_blank">
-                        <span>View documentation</span>
-                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                    </a>
+
+                    <div class="success-actions">
+                        <a id="btn-view-doc" href="#" class="btn-secondary" target="_blank">
+                            <span>View documentation</span>
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                        <button id="btn-generate-another" class="btn-tertiary" type="button">Generate another</button>
+                    </div>
                 </div>
             </section>
 
         </div>
     </main>
+
+    <!-- About Project Section -->
+    <section class="content-section" id="projects">
+        <div class="section-container">
+            <h2 class="section-title">About the Project</h2>
+            <p class="section-subtitle">A web tool that helps create technical documentation pages automatically. Instead of writing manuals or tutorials by hand, the user enters the link to their project's code (GitHub), and the tool reads the code and writes the guides on its own.</p>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-tag">Graph API</div>
+                    <h3 class="project-name">Orchestrated Nodes</h3>
+                    <p class="project-desc">Built entirely on ADK 2.0. Utilizes distinct function nodes and state edges to achieve predictable, modular workflows instead of simple linear chains.</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-tag">Sandbox</div>
+                    <h3 class="project-name">Secure Isolation</h3>
+                    <p class="project-desc">Simulates a secure Google Sandbox by cloning and stripping code repositories of heavy dependencies, environment secrets, and metadata prior to analysis.</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-tag">Innovation</div>
+                    <h3 class="project-name">Writer & Judge Loop</h3>
+                    <p class="project-desc">An interactive 3-round critique and refinement loop between specialized Writer and Judge AI agents to guarantee high-quality documentation standards.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Diataxis Section -->
+    <section class="content-section" id="diataxis">
+        <div class="section-container">
+            <h2 class="section-title">The Diátaxis Method</h2>
+            <p class="section-subtitle">A systematic framework designed around user needs to solve content, style, and structure challenges.</p>
+            
+            <div class="diataxis-overview">
+                <div class="overview-card">
+                    <h3>Core Principle</h3>
+                    <p>Documentation must be designed around the needs of users throughout their cycle of interaction with a product or technical domain. Created by Daniele Procida.</p>
+                </div>
+                <div class="overview-card">
+                    <h3>Methodology Dimensions</h3>
+                    <p>Structures content by mapping: <strong>Action vs. Cognition</strong> (practical doing vs. theoretical knowing) and <strong>Acquisition vs. Application</strong> (learning a skill vs. applying it on the job).</p>
+                </div>
+            </div>
+
+            <div class="diataxis-grid">
+                <div class="diataxis-card">
+                    <div class="diataxis-num">01</div>
+                    <h3 class="diataxis-mode">Tutorials</h3>
+                    <p class="diataxis-desc"><strong>Learning-oriented lessons</strong> designed for students to learn by doing under guidance. Omits distractions and theoretical explanations, focusing on repeated visible results.</p>
+                </div>
+                <div class="diataxis-card">
+                    <div class="diataxis-num">02</div>
+                    <h3 class="diataxis-mode">How-To Guides</h3>
+                    <p class="diataxis-desc"><strong>Goal-oriented recipes</strong> providing step-by-step instructions to solve real-world problems. Assumes competence, guiding users safely to complete tasks.</p>
+                </div>
+                <div class="diataxis-card">
+                    <div class="diataxis-num">03</div>
+                    <h3 class="diataxis-mode">Reference</h3>
+                    <p class="diataxis-desc"><strong>Information-oriented descriptions</strong> detailing precise technical facts, APIs, configurations, and specifications neutrally, without opinions.</p>
+                </div>
+                <div class="diataxis-card">
+                    <div class="diataxis-num">04</div>
+                    <h3 class="diataxis-mode">Explanation</h3>
+                    <p class="diataxis-desc"><strong>Understanding-oriented discussions</strong> offering context, background, and connections. Explains the "why" so users can reflect on the architecture.</p>
+                </div>
+            </div>
+            <div class="diataxis-more">
+                <p>Want to learn more? Visit the official website at <a href="https://diataxis.fr/" target="_blank" rel="noopener noreferrer">diataxis.fr</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Guide Section -->
+    <section class="content-section" id="guide">
+        <div class="section-container">
+            <h2 class="section-title">How it Works</h2>
+            <p class="section-subtitle">A behind-the-scenes look at the multi-agent generation pipeline</p>
+            
+            <div class="steps-flow">
+                <div class="step-item">
+                    <div class="step-badge">1</div>
+                    <div class="step-content">
+                        <h3>Secure Sandbox Initialization</h3>
+                        <p>The system clones the public repository into a dedicated folder and recursively removes caches, binary media, and environment secrets.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-badge">2</div>
+                    <div class="step-content">
+                        <h3>Static Code Investigation</h3>
+                        <p>The Researcher agent reads all clean code structures and builds a detailed software architecture mapping, finding entry points and endpoints.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-badge">3</div>
+                    <div class="step-content">
+                        <h3>Iterative Quality Loop</h3>
+                        <p>Writer and Judge agents collaborate in a 3-round review cycle to ensure the documentation conforms strictly to the Diátaxis style guidelines.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-badge">4</div>
+                    <div class="step-content">
+                        <h3>Site Compilation & Cleanup</h3>
+                        <p>The SiteWriter agent translates the markdown document into interactive web page assets, zips them for download, and deletes the workspace.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="content-section" id="about">
+        <div class="section-container">
+            <h2 class="section-title">Project Team</h2>
+            <p class="section-subtitle">Meet the minds who made this possible.</p>
+            
+            <div class="team-grid" id="team-grid">
+                <!-- Circular member cards will be appended here dynamically -->
+            </div>
+        </div>
+    </section>
 
     <footer class="footer">
         <p>&copy; 2026 Diátaxis Documentation Generator</p>
