@@ -193,6 +193,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // State 3: Resolution
             setTimeout(() => {
                 transitionState(stateLoading, stateResolution);
+                try {
+                    const audio = new Audio('assets/notification.mp3');
+                    audio.play();
+                } catch (e) {
+                    console.warn('Audio playback was blocked or failed:', e);
+                }
             }, 450);
 
         } catch (error) {
