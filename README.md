@@ -10,6 +10,7 @@ Diátaxis Web is an automated technical documentation generation system powered 
 - **Isolated Workspace Sandbox**: Clones public GitHub repositories into distinct session directories (`workspace_tmp/[UUID]`) and sanitizes dependencies, lock files, binary files, and metadata (simulating Google Sandboxes) before analysis.
 - **Writers & Judges Validation Loop**: Executes a deterministic quality review loop (maximum 3 iterations) where specialized Judges evaluate drafted content against Diátaxis guidelines.
 - **A2UI SiteWriter Integration**: Renders clean HTML/CSS/JS static documentation sites based on the custom specifications defined in `sitewriter.md`, compiled into a download-ready `.zip`.
+- **Security Guardrails**: The analysis pipeline excludes hidden internal tool directories such as `.agents/skills`, detects prompt-injection payloads in source files, and ignores suspicious files completely.
 - **Background Cleanup**: Automatically purges session workspace directories once a document dispatch is completed.
 
 ---
@@ -50,3 +51,10 @@ To execute a test run of the graph workflow locally using a sample repository pa
 ```bash
 uv run python main.py
 ```
+
+### Security Validation
+After installing dependencies, verify the prompt-injection and hidden-directory protections with:
+```bash
+.venv/bin/python -m pytest tests/unit/test_security.py -q
+```
+If you are using `uv` to manage the environment, activate the local venv first or adapt the command to your shell.
