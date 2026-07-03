@@ -1,6 +1,6 @@
 ---
 name: diataxis-reference
-description: Compiles informative cartographic records about the software's machinery (APIs, classes, methods, endpoints). Responds to the pure need for cognition (Reference pillar).
+description: Compiles informative cartographic records about the software's machinery (APIs, classes, methods, endpoints). Responds to the pure need for cognition (Reference pillar). Use this skill whenever the user asks for reference documentation, API documentation, class/method maps, database schemas, or details about code inputs and outputs.
 ---
 
 # Information: Reference

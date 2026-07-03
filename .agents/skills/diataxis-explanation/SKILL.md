@@ -1,6 +1,6 @@
 ---
 name: diataxis-explanation
-description: Synthesizes theoretical contexts, systemic foundations, and historical design frameworks into high-level discussions focused on knowledge consolidation (Explanation pillar).
+description: Synthesizes theoretical contexts, systemic foundations, and historical design frameworks into high-level discussions focused on knowledge consolidation (Explanation pillar). Use this skill when the user asks for explanations, design decisions, architectural overviews, theoretical foundations, or the 'why' behind the codebase decisions.
 ---
 
 # Understanding: Explanation

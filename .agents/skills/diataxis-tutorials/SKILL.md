@@ -1,6 +1,6 @@
 ---
 name: diataxis-tutorials
-description: Builds a practical lesson focused on skill acquisition through directed action, guaranteeing a complete and successful learning experience (Tutorials pillar).
+description: Builds a practical lesson focused on skill acquisition through directed action, guaranteeing a complete and successful learning experience (Tutorials pillar). Use this skill whenever the user requests a tutorial, a step-by-step learning guide, or wants to teach a new user how to start using their repository/code.
 ---
 
 # Learning: Tutorials

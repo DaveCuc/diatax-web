@@ -1,6 +1,6 @@
 ---
 name: sitewriter
-description: Base structure rules for rendering Diataxis Markdown content into a responsive three-column static HTML/CSS layout.
+description: Base structure rules for rendering Diataxis Markdown content into a responsive three-column static HTML/CSS layout. Use this skill whenever compiling, generating, or rendering static HTML/CSS pages from markdown content, especially when organizing documentation layouts or documentation landing pages.
 ---
 
 # Sitewriter Base Structure Rules

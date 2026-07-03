@@ -1,6 +1,6 @@
 ---
 name: diataxis-howto
-description: Develops operational guidelines focused on solving specific problems and real-world tasks for users with proven technical competence (How-to Guides pillar).
+description: Develops operational guidelines focused on solving specific problems and real-world tasks for users with proven technical competence (How-to Guides pillar). Use this skill whenever the user asks for a how-to guide, task-oriented guides, or instructions on how to solve a specific problem or configure a specific feature.
 ---
 
 # Work: How-to Guides
