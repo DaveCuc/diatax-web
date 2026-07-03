@@ -19,6 +19,7 @@ import json
 import uuid
 import shutil
 import stat
+import datetime
 import subprocess
 import zipfile
 from typing import Any
@@ -602,6 +603,8 @@ def generate_site(ctx: Context, node_input: dict) -> Event:
     workspace_path = Path(ctx.state.get("workspace_path", ""))
     markdown_content = ctx.state.get("generated_markdown", "")
     description = ctx.state.get("description", "")
+    guide_type = ctx.state.get("guide_type", "").capitalize()
+    current_year = datetime.datetime.now().year
     
     # Load design skills via SkillToolset
     skills_dir = Path(AGENT_DIR) / ".agents" / "skills"
@@ -624,6 +627,11 @@ def generate_site(ctx: Context, node_input: dict) -> Event:
     prompt = f"""
 Act as "SiteWriter", an expert minimalist interface architect.
 Your objective is to process the following technical draft in Markdown and generate the interactive landing page (complete HTML and CSS).
+
+You must strictly render only the active Diátaxis document type/pillar: "{guide_type}".
+- Navbar: Must display only the Project Title and the Document Type: "{guide_type}". Do NOT write generic "Documentation".
+- Footer: Must display the Project Version, Author ("DiataxWeb"), and the Current Year ({current_year}). Do NOT place version, author, or year in the center column.
+- Left Column Sidebar: Must only link to the generated chapters of the active "{guide_type}" pillar. Do NOT display placeholders or links for other pillars that were not requested or generated.
 
 You must combine the base layout structures (sitewriter rules) with dynamic visual design principles (frontend design rules) to create an elegant, unique, and premium website matching the project's identity.
 

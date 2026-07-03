@@ -19,13 +19,13 @@ Generate the content for an `index.html` file structured in a strict three-colum
 * **Mandatory Navbar**: Include a top-fixed or semantic `<nav>` bar containing exclusively the **Project Title** and **Document Type** (pillar).
 * **Mandatory Footer**: Include a semantic `<footer>` element containing the project **Version**, the author **DiataxWeb**, and the **Current Year** (e.g. 2026).
 * **Left Column (Global Navigation):**
-  * Create a lateral `<aside>` containing a semantic vertical list (`<nav><ul><li><a href="...">Text</a></li>...</ul></nav>`) pointing to the master sections of the document (Introduction, Tutorials, How-to Guides, Reference, Explanation).
+  * Create a lateral `<aside>` containing a semantic vertical list (`<nav><ul><li><a href="...">Text</a></li>...</ul></nav>`) pointing exclusively to the generated chapters of the active documentation pillar. Do not include placeholder links for other pillars that are not part of the active generated document.
 * **Center Column (Main Content):**
-  * Wrap the landing page ("Introduction") in an `<article id="start" class="page">`.
-  * Extract available metadata and inject a header block containing the project's Version, Author, and Summary.
-  * **Documentation Type Subtitle**: Right below the main project title in the header block, explicitly render a subtitle indicating the type/pillar of documentation generated (e.g., "Documentation Type: Tutorial", "Documentation Type: Reference", etc.).
-  * **First Obligatory Chapter (Introduction)**: Inject an introductory chapter as the very first mandatory section/chapter inside the center column. This chapter must provide context-rich introductory information about the project, written in the exact tone, perspective, and style guidelines matching the selected documentation pillar (e.g., teaching and action-oriented for a tutorial, transactional for how-to guides).
-  * For each provided Diátaxis section, generate an independent `<article>` with its corresponding `id` and the `page` class.
+  * Wrap the landing page in an `<article id="start" class="page">`.
+  * **Documentation Type Subtitle**: Right below the main project title in the landing header block, explicitly render a subtitle indicating the type/pillar of documentation generated (e.g., "Documentation Type: Tutorial", "Documentation Type: Reference", etc.).
+  * **Metadata Restriction**: Do NOT display or place the project Version, Author, or Year in the center column metadata block. These three attributes must be placed strictly and exclusively within the `<footer>` element.
+  * **First Obligatory Chapter (Introduction)**: Inject an introductory chapter as the very first mandatory section/chapter inside the center column. This chapter must provide context-rich introductory information about the project, written in the exact tone, perspective, and style guidelines matching the selected documentation pillar (e.g., teaching and action-oriented for a tutorial, transactional for how-to guides). It must serve as the intro to the active pillar, not as a standalone generic 'Introduction' document.
+  * For each provided Diátaxis section of the active pillar, generate an independent `<article>` with its corresponding `id` and the `page` class.
   * When rendering the Markdown to HTML, intercept each `<h2>` and `<h3>` tag and force a unique `id` attribute by combining the section name and the formatted header text (e.g., `id="tutorial-initial-configuration"`).
 * **Right Column (Local Index / TOC):**
   * Scan the previously processed `<h2>` and `<h3>` headers and build a secondary navigation menu (`<ul>`).
