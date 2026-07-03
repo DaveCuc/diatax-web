@@ -47,6 +47,7 @@ from google.adk.tools.skill_toolset import SkillToolset
 # This permits changing LLM targets seamlessly without modifying the code.
 # =========================================================================
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+AGENT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # =========================================================================
 # Workflow State Schema Definition
