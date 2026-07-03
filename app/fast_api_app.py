@@ -38,9 +38,24 @@ from google.genai import types
 
 load_dotenv()
 setup_telemetry()
-_, project_id = google.auth.default()
-logging_client = google_cloud_logging.Client()
-logger = logging_client.logger(__name__)
+
+import logging
+
+class FallbackLogger:
+    def __init__(self, name):
+        self.logger = logging.getLogger(name)
+        logging.basicConfig(level=logging.INFO)
+        
+    def log_struct(self, info, severity="INFO"):
+        self.logger.info(f"[{severity}] {json.dumps(info)}")
+
+try:
+    _, project_id = google.auth.default()
+    logging_client = google_cloud_logging.Client()
+    logger = logging_client.logger(__name__)
+except Exception:
+    logger = FallbackLogger(__name__)
+
 allow_origins = (
     os.getenv("ALLOW_ORIGINS", "").split(",") if os.getenv("ALLOW_ORIGINS") else None
 )
