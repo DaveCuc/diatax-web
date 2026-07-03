@@ -101,3 +101,8 @@ To run the agent workflow pipeline locally using terminal commands with a mock p
 uv run python main.py
 ```
 
+## License
+
+This project and its source code are licensed under the [Creative Commons Attribution 4.0 International License (CC BY 4.0)](http://creativecommons.org/licenses/by/4.0/). 
+See the `LICENSE` file in the root directory of this repository for full details.
+
