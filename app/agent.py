@@ -154,19 +154,27 @@ def rmtree_force(path: Path):
 # =========================================================================
 def compress_workspace(workspace_dir: Path) -> Path:
     """
-    Packages all generated assets (Markdown document, HTML, CSS, JS)
-    inside the session workspace into documentation.zip for delivery.
+    Packages only the generated documentation assets (Markdown document, HTML, CSS, JS, summaries, reports)
+    inside the session workspace into documentation.zip for delivery, excluding original source files.
     """
     zip_path = workspace_dir / "documentation.zip"
+    
+    # Closed list of generated documentation filenames
+    doc_filenames = [
+        "index.html",
+        "style.css",
+        "script.js",
+        "document.md",
+        "analysis_summary.txt",
+        "security_report.md",
+        "security_report.pdf"
+    ]
+    
     with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
-        for root, _, files in os.walk(workspace_dir):
-            for file in files:
-                # Exclude the zip archive itself to prevent recursive inflation
-                if file == "documentation.zip":
-                    continue
-                file_path = Path(root) / file
-                rel_path = file_path.relative_to(workspace_dir)
-                zipf.write(file_path, rel_path)
+        for fname in doc_filenames:
+            file_path = workspace_dir / fname
+            if file_path.exists():
+                zipf.write(file_path, fname)
     return zip_path
 
 # =========================================================================
