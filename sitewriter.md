@@ -23,6 +23,8 @@ Generate the content for an `index.html` file structured in a strict three-colum
 * **Center Column (Main Content):**
 * Wrap the landing page ("Introduction") in an `<article id="start" class="page">`.
 * Extract available metadata and inject a header block containing the project's Version, Author, and Summary.
+* **Documentation Type Subtitle**: Right below the main project title in the header block, explicitly render a subtitle indicating the type/pillar of documentation generated (e.g., "Documentation Type: Tutorial", "Documentation Type: Reference", etc.).
+* **First Obligatory Chapter (Introduction)**: Inject an introductory chapter as the very first mandatory section/chapter inside the center column. This chapter must provide context-rich introductory information about the project, written in the exact tone, perspective, and style guidelines matching the selected documentation pillar (e.g., teaching and action-oriented for a tutorial, transactional for how-to guides).
 * For each provided Diátaxis section, generate an independent `<article>` with its corresponding `id` and the `page` class.
 * When rendering the Markdown to HTML, intercept each `<h2>` and `<h3>` tag and force a unique `id` attribute by combining the section name and the formatted header text (e.g., `id="tutorial-initial-configuration"`).
 
