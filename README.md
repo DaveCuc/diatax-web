@@ -4,32 +4,67 @@ Diátaxis Web is an automated technical documentation generation system powered 
 
 ---
 
-## Key Features
+## 1. The Problem
 
-- **ADK 2.0 Graph Workflow API**: Structured using a function-based graph layout (Orchestrator and Researcher nodes) rather than legacy sequential structures.
-- **Isolated Workspace Sandbox**: Clones public GitHub repositories into distinct session directories (`workspace_tmp/[UUID]`) and sanitizes dependencies, lock files, binary files, and metadata (simulating Google Sandboxes) before analysis.
-- **Writers & Judges Validation Loop**: Executes a deterministic quality review loop (maximum 3 iterations) where specialized Judges evaluate drafted content against Diátaxis guidelines.
-- **A2UI SiteWriter Integration**: Renders clean HTML/CSS/JS static documentation sites based on the custom specifications defined in `sitewriter.md`, compiled into a download-ready `.zip`.
-- **Background Cleanup**: Automatically purges session workspace directories once a document dispatch is completed.
+Writing and maintaining high-quality technical documentation is one of the most significant challenges in software engineering. Key problems include:
+
+- **Structure & Style Inconsistency**: Documentation often mixes tutorials, references, and theoretical explanations, confusing readers and reducing readability.
+- **Out-of-Date Manuals**: Codebases evolve rapidly. Manual documentation quickly becomes obsolete as endpoints, signatures, and architectures change.
+- **Security & Privacy Overhead**: Sending entire private code repositories to external, untrusted AI analysis tools presents severe security risks (leaking credentials, secrets, or Intellectual Property).
+- **High Cognitive Cost**: Engineers spend valuable development hours writing, formatting, and structuring text rather than focusing on building features.
 
 ---
 
-## Installation & Setup
+## 2. The Solution
 
-### 1. Prerequisites
+**Diátaxis Web** addresses these challenges by automating the documentation lifecycle using structural AI agent networks:
+
+- **Diátaxis Framework Integration**: Every generated file is aligned strictly to one of the four user-oriented documentation quadrants (Tutorials, How-To Guides, References, or Explanations).
+- **Isolated Local Sandbox**: Codebases are cloned, sanitized of secrets, caches, and media files locally before analysis, simulating secure Google Sandbox environments.
+- **Dynamic Structural Generation**: Utilizes Google GenAI (Gemini) to inspect parsed codebase maps and output clean static sites (HTML/CSS/JS) automatically.
+- **Continuous Quality Control**: Implements a writer-judge AI feedback loop to grade, revise, and refine draft documentation before final delivery.
+
+---
+
+## 3. System Architecture
+
+The project is designed using the modular **ADK 2.0 Graph Workflow API**, moving away from legacy linear orchestrations. The workflow topology defines four major functional nodes:
+
+```mermaid
+graph TD
+    START((START)) --> Node1[initialize_workspace]
+    Node1 --> Node2[investigate_code]
+    Node2 --> Node3[generate_documentation]
+    Node3 --> Node4[generate_site]
+    Node4 --> END((END))
+```
+
+1. **`initialize_workspace` (Orchestrator)**: Creates a session directory with a random UUID, clones the Git repository, and applies recursive sanitization filters (deleting `node_modules`, `.env`, lockfiles, and media files).
+2. **`investigate_code` (Researcher)**: Inspects the sanitized source code structure to extract core endpoints, dependencies, and architectural patterns, saving a technical `analysis_summary.txt`.
+3. **`generate_documentation` (Writers & Judges)**: Runs an iterative loop (max 3 rounds) where a Writer agent drafts technical pages following Diátaxis guidelines, and a Judge agent evaluates, approves, or provides critiques.
+4. **`generate_site` (SiteWriter / A2UI)**: Takes approved Markdown files, transforms them into static web assets (HTML/CSS/JS) based on design rules from `sitewriter.md`, compresses everything into `documentation.zip`, and invokes a background task to safely delete the session folder.
+
+---
+
+## 4. Setup & Installation
+
+### Prerequisites
 - Python 3.11 or later
 - [uv](https://docs.astral.sh/uv/getting-started/installation/index.md) (highly recommended fast package installer)
 
-### 2. Environment Configuration
-Clone the environment template and configure your parameters:
+### 1. Configure Credentials
+Copy the environment template:
 ```bash
 cp .env.example .env
 ```
+Open `.env` and set your credentials:
+* **Option A (AI Studio API Key)**: Add your `GEMINI_API_KEY=your_key_here` and comment out the Vertex AI settings.
+* **Option B (Google Cloud Vertex AI)**: Enable `GOOGLE_GENAI_USE_VERTEXAI=true` and set your `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION`.
 
-To configure your API credentials (either Google AI Studio API Key or Google Cloud SDK/Vertex AI), refer to the detailed [AUTH_SETUP.md](AUTH_SETUP.md) guide.
+For detailed authentication steps, refer to [AUTH_SETUP.md](AUTH_SETUP.md).
 
-### 3. Install Dependencies
-Create the environment and install package dependencies:
+### 2. Install Project Dependencies
+Initialize the virtual environment and synchronize dependencies:
 ```bash
 uv venv
 uv pip install -r pyproject.toml
@@ -37,38 +72,18 @@ uv pip install -r pyproject.toml
 
 ---
 
-## Running the Application
+## 5. Execution Instructions
 
-### Start the Development Server
-To launch the FastAPI backend server (which serves the frontend landing page at `http://localhost:8000/` and provides the orchestration endpoints):
+### Start the Web Application
+To launch the FastAPI development server (which serves the frontend landing page and API endpoints):
 ```bash
 uv run python app/fast_api_app.py
 ```
+Open your browser and navigate to the custom landing page:
+👉 **[http://localhost:8000/static/index.html](http://localhost:8000/static/index.html)**
 
-### Run Locally (Console Test)
-To execute a test run of the graph workflow locally using a sample repository payload:
+### Run Console Tests
+To run the agent workflow pipeline locally using terminal commands with a mock payload:
 ```bash
 uv run python main.py
 ```
-
----
-
-## Accessing the User Interface
-
-When running the FastAPI server (`app/fast_api_app.py`), the default Google Agent Development Kit (ADK) dashboard mounts itself on the root path `/` and may redirect you automatically to the ADK Dev UI.
-
-You can access the interfaces using the following URLs:
-
-1. **Custom Landing Page (Clean Tech UI)**: 
-   Go directly to the static path:
-   👉 [http://localhost:8000/static/index.html](http://localhost:8000/static/index.html)
-
-2. **FastAPI Swagger API Docs**:
-   👉 [http://localhost:8000/docs](http://localhost:8000/docs)
-
-3. **ADK Dev-UI / Playground**:
-   👉 [http://localhost:8000/](http://localhost:8000/)
-
-### Customizing Root Redirect (Optional)
-If you want the root path `/` to load the custom landing page instead of the ADK Dev UI, edit [app/fast_api_app.py](app/fast_api_app.py) and change `web=True` to `web=False` inside the `get_fast_api_app` call.
-
