@@ -36,6 +36,8 @@ from google.adk.events.event import Event
 from google.adk.agents.context import Context
 from google.genai import types
 from app.security import generate_security_report, is_prompt_injection_content
+from google.adk.skills import load_skill_from_dir
+from google.adk.tools.skill_toolset import SkillToolset
 
 # =========================================================================
 # Model Selection Configuration
@@ -546,7 +548,7 @@ def generate_site(ctx: Context, node_input: dict) -> Event:
     """
     Design Role: SiteWriter (A2UI).
     - Processes the approved Markdown file.
-    - References sitewriter.md design guidelines.
+    - Loads visual design skills (sitewriter & frontend-design) via SkillToolset.
     - Generates corresponding static site index.html and style.css assets.
     - Packages all resources inside documentation.zip.
     """
@@ -554,24 +556,49 @@ def generate_site(ctx: Context, node_input: dict) -> Event:
     markdown_content = ctx.state.get("generated_markdown", "")
     description = ctx.state.get("description", "")
     
-    # Read HTML/CSS formatting guidelines
+    # Load design skills via SkillToolset
+    skills_dir = Path(AGENT_DIR) / ".agents" / "skills"
     try:
-        with open("sitewriter.md", "r", encoding="utf-8") as f:
-            sitewriter_rules = f.read()
-    except Exception:
-        sitewriter_rules = "No sitewriter.md rules found."
+        sitewriter_skill = load_skill_from_dir(skills_dir / "sitewriter")
+        frontend_design_skill = load_skill_from_dir(skills_dir / "frontend-design")
+        skill_toolset = SkillToolset(skills=[sitewriter_skill, frontend_design_skill])
+        
+        sitewriter_instructions = skill_toolset._get_skill("sitewriter").instructions
+        design_instructions = skill_toolset._get_skill("frontend-design").instructions
+    except Exception as e:
+        # Fallback to file reading if skill loading fails in sandbox environments
+        try:
+            with open("sitewriter.md", "r", encoding="utf-8") as f:
+                sitewriter_instructions = f.read()
+        except Exception:
+            sitewriter_instructions = "No sitewriter rules found."
+        design_instructions = "Generate modern visual styles with premium layout and typography."
 
     prompt = f"""
 Act as "SiteWriter", an expert minimalist interface architect.
 Your objective is to process the following technical draft in Markdown and generate the interactive landing page (complete HTML and CSS).
 
-SiteWriter Guidelines:
-{sitewriter_rules}
+You must combine the base layout structures (sitewriter rules) with dynamic visual design principles (frontend design rules) to create an elegant, unique, and premium website matching the project's identity.
 
-Project context description (use this to apply color, typography, and visual style customization subtly):
+=========================================
+1. BASE PAGE STRUCTURE & FUNCTIONALITY RULES (SITELAYOUT SKILL):
+=========================================
+{sitewriter_instructions}
+
+=========================================
+2. DYNAMIC VISUAL DESIGN & AESTHETIC RULES (FRONTEND DESIGN SKILL):
+=========================================
+{design_instructions}
+
+=========================================
+PROJECT CONTEXT DESCRIPTION:
+=========================================
+Use this description to apply color, typography, and visual style customization dynamically:
 {description}
 
-Approved technical documentation in Markdown:
+=========================================
+DOCUMENTATION CONTENT (MARKDOWN):
+=========================================
 {markdown_content}
 
 You must respond exclusively in structured JSON format, without any surrounding comments or markdown blocks:
