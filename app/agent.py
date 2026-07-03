@@ -103,35 +103,47 @@ def get_genai_client() -> genai.Client:
 # =========================================================================
 def get_diataxis_guidelines(guide_type: str) -> str:
     """
-    Reads the local 'diataxis.md' file and extracts instructions matching
-    the selected documentation pillar. Acts as the knowledge base for our agents.
+    Loads the specific Diataxis skill using SkillToolset based on the guide type.
     """
-    try:
-        with open("diataxis.md", "r", encoding="utf-8") as f:
-            content = f.read()
-    except Exception:
-        return "Failed to load Diátaxis guidelines."
-
-    # Map pillars to corresponding section boundary markers in diataxis.md
-    sections = {
-        "tutorial": ["1. Learning: Tutorials", "2. Work:"],
-        "how-to": ["2. Work: How-to Guides", "3. Information:"],
-        "reference": ["3. Information: Reference", "4. Understanding:"],
-        "explanation": ["4. Understanding: Explanation", "---"]
+    # Normalize guide types to match skill folder names
+    mapping = {
+        "tutorial": "diataxis-tutorials",
+        "how-to": "diataxis-howto",
+        "reference": "diataxis-reference",
+        "explanation": "diataxis-explanation"
     }
-    
-    bounds = sections.get(guide_type.lower())
-    if not bounds:
-        return "Unrecognized guide type in Diátaxis."
-        
-    start_idx = content.find(bounds[0])
-    if start_idx == -1:
-        return f"Section {guide_type} not found in diataxis.md."
-        
-    end_idx = content.find(bounds[1], start_idx)
-    if end_idx == -1:
-        return content[start_idx:].strip()
-    return content[start_idx:end_idx].strip()
+    skill_name = mapping.get(guide_type.lower())
+    if not skill_name:
+        return "Unrecognized guide type in Diataxis."
+
+    skills_dir = Path(AGENT_DIR) / ".agents" / "skills"
+    try:
+        diataxis_skill = load_skill_from_dir(skills_dir / skill_name)
+        skill_toolset = SkillToolset(skills=[diataxis_skill])
+        return skill_toolset._get_skill(skill_name).instructions
+    except Exception as e:
+        # Fallback to string slicing if skill directory loading fails
+        try:
+            with open("diataxis.md", "r", encoding="utf-8") as f:
+                content = f.read()
+            sections = {
+                "tutorial": ["1. Learning: Tutorials", "2. Work:"],
+                "how-to": ["2. Work: How-to Guides", "3. Information:"],
+                "reference": ["3. Information: Reference", "4. Understanding:"],
+                "explanation": ["4. Understanding: Explanation", "---"]
+            }
+            bounds = sections.get(guide_type.lower())
+            if not bounds:
+                return "Unrecognized guide type in Diataxis."
+            start_idx = content.find(bounds[0])
+            if start_idx == -1:
+                return f"Section {guide_type} not found in diataxis.md."
+            end_idx = content.find(bounds[1], start_idx)
+            if end_idx == -1:
+                return content[start_idx:].strip()
+            return content[start_idx:end_idx].strip()
+        except Exception:
+            return f"Failed to load Diátaxis guidelines: {str(e)}"
 
 # =========================================================================
 # Forceful Directory Deletion (Windows Workaround)
