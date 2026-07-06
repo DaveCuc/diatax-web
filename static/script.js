@@ -285,7 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // The system will automatically fetch their avatars and names from the GitHub API.
     const defaultMembers = [
         'DaveCuc',
-        'sourabhDandage'
+        'sourabhDandage',
+        'Khalidaadkd',
+        'alluri1'
+
         // 'username2',
         // 'username3'
     ];
