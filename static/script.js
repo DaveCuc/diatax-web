@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 transitionState(stateLoading, stateResolution);
                 try {
-                    const audio = new Audio('assets/notification.mp3');
+                    const audio = new Audio('static/assets/notification.mp3');
                     audio.play();
                 } catch (e) {
                     console.warn('Audio playback was blocked or failed:', e);

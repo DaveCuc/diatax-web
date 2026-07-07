@@ -119,6 +119,11 @@ app: FastAPI = get_fast_api_app(
     lifespan=lifespan,
 )
 
+# Remove default ADK redirect root route to serve static landing page directly
+for route in list(app.routes):
+    if route.path == "/":
+        app.routes.remove(route)
+
 # =========================================================================
 # Endpoint: Trigger Documentation Generation (/generate)
 # =========================================================================
@@ -178,6 +183,7 @@ async def generate_documentation_endpoint(req: GenerateRequest) -> dict[str, str
 # =========================================================================
 # Static Assets Mount
 # =========================================================================
+os.makedirs("workspace_tmp", exist_ok=True)
 app.mount("/workspace_tmp", StaticFiles(directory="workspace_tmp"), name="workspaces")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
